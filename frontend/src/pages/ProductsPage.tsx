@@ -67,7 +67,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ user, onLogout }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setSearchResults(data.results);
+        setSearchResults(data.products || []);
       }
     } catch (error) {
       console.error('Search failed:', error);
@@ -174,7 +174,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ user, onLogout }) => {
                 Search Results for "{searchQuery}"
               </h2>
               <p className="text-gray-600">
-                Found {searchResults.length} product{searchResults.length !== 1 ? 's' : ''}
+                Found {searchResults?.length || 0} product{(searchResults?.length || 0) !== 1 ? 's' : ''}
               </p>
             </div>
           )}
