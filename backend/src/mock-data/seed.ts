@@ -1,61 +1,9 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import dotenv from "dotenv";
-import { pipeline, env } from "@xenova/transformers";
+import { generateEmbedding } from "./embeddings.js";
 
 // Load environment variables
 dotenv.config();
-
-// Configure transformers to allow model downloads
-env.allowRemoteModels = true;
-env.allowLocalModels = true;
-
-// Initialize the embedding pipeline
-let embedder: any = null;
-
-// Initialize the sentence transformer model for embeddings
-const initializeEmbedder = async () => {
-  if (!embedder) {
-    console.log("🤖 Loading all-MiniLM-L6-v2 model (reliable & tested)...");
-    try {
-      // Use all-MiniLM-L6-v2 model for semantic embeddings (384 dimensions)
-      embedder = await pipeline(
-        "feature-extraction",
-        "Xenova/all-MiniLM-L6-v2"
-      );
-      console.log("✅ all-MiniLM-L6-v2 model loaded successfully!");
-    } catch (error) {
-      console.error("❌ Failed to load MiniLM-L6 transformer model:", error);
-      throw error;
-    }
-  }
-  return embedder;
-};
-
-// Generate semantic embeddings using transformers.js
-const generateEmbedding = async (text: string): Promise<number[]> => {
-  try {
-    const model = await initializeEmbedder();
-
-    // Generate embeddings using the transformer model
-    const output = await model(text, { pooling: "mean", normalize: true });
-
-    // Extract the embedding vector
-    const embedding = Array.from(output.data);
-
-    // The all-MiniLM-L6-v2 model produces 384-dimensional embeddings
-    // We need to pad or truncate to 1024 dimensions for our Pinecone index
-    const paddedEmbedding = new Array(1024).fill(0);
-    for (let i = 0; i < Math.min(embedding.length, 1024); i++) {
-      paddedEmbedding[i] = embedding[i];
-    }
-
-    return paddedEmbedding;
-  } catch (error) {
-    console.error("Error generating MiniLM-L6 embedding:", error);
-    // Fallback to a zero vector if embedding fails
-    return new Array(1024).fill(0);
-  }
-};
 
 // Product data for seeding - updated with working images and accurate products
 const products = [
@@ -157,7 +105,7 @@ const products = [
     name: "Nike Air Zoom Pegasus 40",
     price: 139.99,
     imageUrl:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&auto=format",
   },
   {
     id: "prod-11",
@@ -227,7 +175,7 @@ const products = [
     name: "Kindle Paperwhite",
     price: 139.99,
     imageUrl:
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop&auto=format",
   },
   {
     id: "prod-18",
@@ -255,7 +203,7 @@ const products = [
       "Herman Miller Aeron Chair with ergonomic design, breathable mesh material, adjustable lumbar support, and tilt mechanism. The gold standard for office seating and productivity.",
     category: "Home Office",
     name: "Herman Miller Aeron Chair",
-    price: 1395.00,
+    price: 1395.0,
     imageUrl:
       "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop&auto=format",
   },
@@ -265,9 +213,9 @@ const products = [
       "Allbirds Tree Runners Sneakers made from eucalyptus tree fiber with merino wool lining, sugarcane-based sole, and machine-washable design. Sustainable and comfortable everyday shoes.",
     category: "Footwear",
     name: "Allbirds Tree Runners",
-    price: 98.00,
+    price: 98.0,
     imageUrl:
-      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&auto=format",
   },
   {
     id: "prod-22",
@@ -285,7 +233,7 @@ const products = [
       "AirPods Pro 2nd Generation with Active Noise Cancellation, Transparency mode, Spatial Audio, and MagSafe charging case. Up to 6 hours of listening time with ANC on, perfect for music and calls.",
     category: "Electronics",
     name: "AirPods Pro 2nd Gen",
-    price: 249.00,
+    price: 249.0,
     imageUrl:
       "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400&h=400&fit=crop&auto=format",
   },
@@ -305,7 +253,7 @@ const products = [
       "MacBook Pro 14-inch with M3 Pro chip, 18GB unified memory, 512GB SSD storage, Liquid Retina XDR display, and up to 18 hours battery life. Perfect for developers, designers, and creative professionals.",
     category: "Electronics",
     name: "MacBook Pro 14-inch M3",
-    price: 1999.00,
+    price: 1999.0,
     imageUrl:
       "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop&auto=format",
   },
@@ -315,7 +263,7 @@ const products = [
       "iPad Pro 12.9-inch with M2 chip, 128GB storage, Wi-Fi 6E, USB-C with Thunderbolt, and Apple Pencil support. Ideal for digital art, note-taking, and productivity on the go.",
     category: "Electronics",
     name: "iPad Pro 12.9-inch M2",
-    price: 1099.00,
+    price: 1099.0,
     imageUrl:
       "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop&auto=format",
   },
@@ -385,7 +333,7 @@ const products = [
       "Arduino Uno R3 Microcontroller Board with USB cable, 14 digital pins, 6 analog inputs, and extensive community support. Perfect for electronics prototyping and STEM education.",
     category: "Electronics",
     name: "Arduino Uno R3",
-    price: 27.60,
+    price: 27.6,
     imageUrl:
       "https://images.unsplash.com/photo-1553406830-ef2513450d76?w=400&h=400&fit=crop&auto=format",
   },
@@ -430,26 +378,27 @@ const seedPineconeData = async () => {
     try {
       const stats = await index.describeIndexStats();
       console.log(`📊 Current index stats:`, stats);
-      
+
       // Clear existing data in the products namespace
-      if (stats.namespaces?.products?.recordCount && stats.namespaces.products.recordCount > 0) {
-        console.log('🗑️ Clearing existing products from namespace...');
-        await index.namespace('products').deleteAll();
-        console.log('✅ Namespace cleared successfully!');
-        
-        // Wait a moment for the deletion to propagate
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      if (
+        stats.namespaces?.products?.recordCount &&
+        stats.namespaces.products.recordCount > 0
+      ) {
+        console.log("🗑️ Clearing existing products from namespace...");
+        await index.namespace("products").deleteAll();
+        console.log("✅ Namespace cleared successfully!");
       }
     } catch (error) {
       console.log("⚠️ Could not get index stats, proceeding with seeding...");
     }
 
     // Generate embeddings and upsert products to Pinecone
-    console.log("🧠 Generating embeddings for products...");
+    console.log("🧠 Generating embeddings using Hugging Face API...");
 
     const productsWithEmbeddings = await Promise.all(
       products.map(async (product) => {
         const text = `${product.name} ${product.chunk_text} ${product.category}`;
+        console.log(`🔄 Processing: ${product.name}`);
         const embedding = await generateEmbedding(text);
         return {
           id: product.id,
@@ -474,7 +423,6 @@ const seedPineconeData = async () => {
 
     // Wait a moment for the data to be indexed
     console.log("⏳ Waiting for indexing to complete...");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Verify the data was uploaded
     const stats = await index.describeIndexStats();

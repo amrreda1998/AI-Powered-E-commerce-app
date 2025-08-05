@@ -21,11 +21,12 @@ This project is a production-ready e-commerce platform built with Node.js, TypeS
 
 ### Backend
 - **Node.js + Express API**: RESTful endpoints for authentication, product fetch, and semantic search
-- **Semantic Search Engine**: Pinecone vector database with transformer-based embeddings (all-MiniLM-L6-v2, padded to 1024 dims)
-- **Product Catalog**: 35+ tech-focused products with verified Unsplash images and metadata
+- **AI-Powered Semantic Search**: Pinecone vector database with Hugging Face Inference API embeddings
+- **Advanced Embedding Model**: BAAI/bge-base-en-v1.5 (768-dim) via HF API, padded to 1024 dims for Pinecone
+- **Product Catalog**: 35+ curated tech products with verified Unsplash images and rich metadata
 - **Mock Authentication**: Simulated Google OAuth and JWT verification endpoints
-- **Stable Embedding Model**: Uses @xenova/transformers for reliable, offline embedding generation
-- **CORS**: Configured for frontend-backend communication
+- **Cloud-Based Embeddings**: No local model downloads, instant startup, reliable inference
+- **CORS**: Configured for seamless frontend-backend communication
 
 ### DevOps & Security
 - **.env Support**: All secrets and API keys stored in environment variables
@@ -53,9 +54,10 @@ This project is a production-ready e-commerce platform built with Node.js, TypeS
 ## 🛠️ Tech Stack
 - **Frontend**: React, TypeScript, Vite, TailwindCSS
 - **Backend**: Node.js, Express, TypeScript
-- **Database**: Pinecone (semantic search), MongoDB (users/products, planned)
-- **AI/ML**: @xenova/transformers (all-MiniLM-L6-v2)
+- **Database**: Pinecone (vector search), MongoDB (users/products, planned)
+- **AI/ML**: Hugging Face Inference API (BAAI/bge-base-en-v1.5)
 - **Authentication**: Mock Google OAuth (real OAuth planned)
+- **Cloud Services**: Hugging Face for embeddings, Pinecone for vector storage
 
 ---
 
@@ -66,7 +68,10 @@ This project is a production-ready e-commerce platform built with Node.js, TypeS
    ```bash
    npm install
    ```
-3. **Set up environment variables** in `.env` files (see `.env.example`)
+3. **Set up environment variables** in `.env` files:
+   - `PINECONE_API_KEY`: Your Pinecone API key
+   - `PINECONE_INDEX_NAME`: Pinecone index name (default: "products")
+   - `HF_TOKEN`: Your Hugging Face API token for embeddings
 4. **Seed the database** with products:
    ```bash
    cd backend
@@ -100,5 +105,16 @@ MIT
 
 ---
 
+## 🔄 Recent Updates
+
+### v2.0.0 - Hugging Face Migration (August 6, 2025)
+- ✅ **Migrated to Hugging Face Inference API** for embedding generation
+- ✅ **Upgraded embedding model** to BAAI/bge-base-en-v1.5 (better accuracy)
+- ✅ **Eliminated local model downloads** (~2GB saved, instant startup)
+- ✅ **Improved reliability** with cloud-based inference
+- ✅ **Fixed broken product images** (Kindle Paperwhite, Allbirds)
+- ✅ **Streamlined codebase** (removed transformers.js dependency)
+- ✅ **Enhanced performance** (no model loading delays)
+
 ## 📅 Last Updated
-August 5, 2025
+August 6, 2025

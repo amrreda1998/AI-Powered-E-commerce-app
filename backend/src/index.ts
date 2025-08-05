@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import { Pinecone } from "@pinecone-database/pinecone";
-import { pipeline, env } from "@xenova/transformers";
-import { mockProducts } from "./mock-data/products.js";
+import { generateEmbedding } from "./mock-data/embeddings.js";
+import { mockProducts } from "./mock-data/backup_products.js";
 
 // Load environment variables
 dotenv.config();
@@ -16,87 +16,25 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-const connectDB = async () => {
-  try {
-    await mongoose.connect(
-      process.env.MONGODB_URI || "mongodb://localhost:27017/ai-ecommerce"
-    );
-    console.log("MongoDB connected successfully");
-  } catch (error) {
-    console.error("MongoDB connection error:", error);
-    process.exit(1);
-  }
-};
+// // MongoDB connection
+// const connectDB = async () => {
+//   try {
+//     await mongoose.connect(
+//       process.env.MONGODB_URI || "mongodb://localhost:27017/ai-ecommerce"
+//     );
+//     console.log("MongoDB connected successfully");
+//   } catch (error) {
+//     console.error("MongoDB connection error:", error);
+//     process.exit(1);
+//   }
+// };
 
-// Pinecone initialization
-let pinecone: Pinecone;
-const initPinecone = async () => {
-  try {
-    pinecone = new Pinecone({
-      apiKey: process.env.PINECONE_API_KEY || "",
-    });
-    console.log("Pinecone initialized successfully");
-  } catch (error) {
-    console.error("Pinecone initialization error:", error);
-  }
-};
+// Initialize Pinecone
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY || "",
+});
 
-// Configure transformers to allow model downloads
-env.allowRemoteModels = true;
-env.allowLocalModels = true;
-
-// Initialize the embedding pipeline
-let embedder: any = null;
-
-// Initialize the sentence transformer model for embeddings
-const initializeEmbedder = async () => {
-  if (!embedder) {
-    console.log(
-      "🤖 Loading all-MiniLM-L6-v2 model for API (reliable & tested)..."
-    );
-    try {
-      embedder = await pipeline(
-        "feature-extraction",
-        "Xenova/all-MiniLM-L6-v2"
-      );
-      console.log("✅ API all-MiniLM-L6-v2 model loaded successfully!");
-    } catch (error) {
-      console.error(
-        "❌ Failed to load API MiniLM-L6 transformer model:",
-        error
-      );
-      throw error;
-    }
-  }
-  return embedder;
-};
-
-// Generate semantic embeddings using transformers.js
-const generateEmbedding = async (text: string): Promise<number[]> => {
-  try {
-    const model = await initializeEmbedder();
-
-    // Generate embeddings using the transformer model
-    const output = await model(text, { pooling: "mean", normalize: true });
-
-    // Extract the embedding vector
-    const embedding = Array.from(output.data);
-
-    // The all-MiniLM-L6-v2 model produces 384-dimensional embeddings
-    // Pad to 1024 dimensions for Pinecone index compatibility
-    const paddedEmbedding = new Array(1024).fill(0);
-    for (let i = 0; i < Math.min(embedding.length, 1024); i++) {
-      paddedEmbedding[i] = embedding[i];
-    }
-
-    return paddedEmbedding;
-  } catch (error) {
-    console.error("Error generating MiniLM-L6 API embedding:", error);
-    // Fallback to a zero vector if embedding fails
-    return new Array(1024).fill(0);
-  }
-};
+const index = pinecone.index(process.env.PINECONE_INDEX_NAME || "products");
 
 // Routes
 app.get("/api/health", (req, res) => {
@@ -222,23 +160,11 @@ app.post("/api/search", async (req, res) => {
 });
 
 // Start server
-// Only start server if not in Vercel serverless
-if (process.env.VERCEL !== "1") {
-  (async () => {
-    await connectDB(); // comment this line if you are not using MongoDB
-    await initPinecone();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })();
-} else {
-  try {
-    console.log("Pinecone initialization in Vercel serverless");
-    await initPinecone();
-  } catch (error) {
-    console.error("Pinecone initialization error:", error);
-    process.exit(1);
-  }
-}
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 API available at http://localhost:${PORT}`);
+  console.log(`🔍 Search endpoint: http://localhost:${PORT}/api/search`);
+  console.log(`📦 Products endpoint: http://localhost:${PORT}/api/products`);
+});
 
 export default app;

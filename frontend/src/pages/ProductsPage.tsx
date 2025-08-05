@@ -38,7 +38,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ user, onLogout }) => {
         `${import.meta.env.VITE_API_BASE_URL}/api/products`
       );
       if (response.ok) {
+        console.log("Products fetched successfully");
         const data = await response.json();
+        console.log(data);
         setProducts(data);
         setSearchResults(data);
       }
