@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 interface User {
   id: string;
   name: string;
@@ -22,7 +21,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       // In a real implementation, you would integrate with Google OAuth
       // For now, we'll simulate a successful login
-      const response = await fetch('http://localhost:3001/api/auth/google', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
