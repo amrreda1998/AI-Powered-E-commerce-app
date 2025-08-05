@@ -33,7 +33,7 @@ function App() {
   const verifyToken = async (token: string) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/verify`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/verify`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

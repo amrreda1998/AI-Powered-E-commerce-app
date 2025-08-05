@@ -35,7 +35,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ user, onLogout }) => {
   const fetchProducts = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/products`
+        `${import.meta.env.VITE_API_BASE_URL}/api/products`
       );
       if (response.ok) {
         const data = await response.json();
@@ -60,7 +60,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ user, onLogout }) => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/search`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/search`,
         {
           method: "POST",
           headers: {
