@@ -225,12 +225,20 @@ app.post("/api/search", async (req, res) => {
 // Only start server if not in Vercel serverless
 if (process.env.VERCEL !== "1") {
   (async () => {
-    await connectDB();
+    await connectDB(); // comment this line if you are not using MongoDB
     await initPinecone();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   })();
+} else {
+  try {
+    console.log("Pinecone initialization in Vercel serverless");
+    await initPinecone();
+  } catch (error) {
+    console.error("Pinecone initialization error:", error);
+    process.exit(1);
+  }
 }
 
 export default app;
