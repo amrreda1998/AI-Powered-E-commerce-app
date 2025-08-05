@@ -221,48 +221,6 @@ app.post("/api/search", async (req, res) => {
   }
 });
 
-// Google OAuth endpoints (simplified for now)
-app.post("/api/auth/google", (req, res) => {
-  // In a real implementation, you would:
-  // 1. Verify Google OAuth token
-  // 2. Create or find user in database
-  // 3. Return JWT token
-
-  const { token } = req.body;
-
-  // Mock response for now
-  res.json({
-    success: true,
-    user: {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      avatar: "J",
-    },
-    token: "mock-jwt-token",
-  });
-});
-
-// Verify token endpoint
-app.get("/api/auth/verify", (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  // Mock verification for now
-  res.json({
-    valid: true,
-    user: {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      avatar: "J",
-    },
-  });
-});
-
 // Start server
 // Only start server if not in Vercel serverless
 if (process.env.VERCEL !== "1") {
