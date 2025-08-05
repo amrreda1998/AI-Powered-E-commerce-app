@@ -1,0 +1,53 @@
+Backend: 
+    - databases : Pinecone + Mongodb
+    - runtime :  Node.js 20+ 
+    - language : Typescript   
+    - libraries: express.js , oauth2.0, cors (you can add what ever best practice here and what project will need)
+    - API : rest api 
+Frontend: 
+    - React.js + vite
+    - TailwindCss
+    - Typescript
+
+
+Project description : 
+    An AI-Powered E-commerce web app that uses semantice search to search for products using Pinecone database
+    The project consists of : 
+        - one login page that has signup button + login button that uses google auth for login  
+        - Products page 
+            Products page is what user see when login 
+            when the user is not logged in they should see only the login page they can not 
+            see the products page unless they are logged in 
+            Products page consists of navbar with a user profile icon that is the first letter of
+            his/her name as the avatar 
+            navbar also has a logo placholder for the app logo (if you can create a nice logo/name for the app it would be great)
+            Products page has products in the center of the screen 
+            prodcuts page has a search bar in which the user can use the semantice search to search for products
+            and get the top k prodcuts that are retrieved by the vector database (Pinecone)
+
+        - other features will be implmented later 
+        - the main focus of this project is to implment semantice search feature  
+
+    Normal user Activity: 
+        user request the page -> redirected to login page if he is not logged in already
+        after scuccessful logging in he will be directed to the products page in which he can do 
+        semantice searching for a product 
+
+    Refrences Docs : 
+        - https://docs.pinecone.io/reference/api/introduction
+        - https://tailwindcss.com/docs/
+
+
+    what is done until now :
+        created the frontend structure and base code using vite + tailwindcss 
+        created the backend folder 
+        created the pinecone database instance with an index name of "products"
+
+    
+    instructions :
+        we will begin with a very basic implmentation of front end ui 
+        and a very basic implmentation of backend 
+        no complex code in the fisrt steps of the project 
+        every thing in simple and minimal but achieves the goals of the projetcs
+        later we will add better ui and better project features 
+         
