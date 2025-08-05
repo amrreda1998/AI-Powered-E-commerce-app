@@ -52,8 +52,7 @@ Project description :
         later we will add better ui and better project features 
          
     new features : 
-        add 50 products to the database using the seed script 
-        use the unsplash images to generate products info
+        add 35 products to the database using the seed script 
         
     
     
